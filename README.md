@@ -1,2 +1,1 @@
-# yyds-project
-no-des
+#万事开头难
