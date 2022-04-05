@@ -5,14 +5,8 @@ import (
 	"yyds-pro/repository/repoimpl"
 )
 
-var Apks ApkService
-
 type ApkService struct {
 	ApkRepo repository.ApkRepo
-}
-
-func init() {
-	Apks = NewApkService()
 }
 
 func NewApkService() ApkService {

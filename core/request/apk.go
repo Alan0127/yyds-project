@@ -8,7 +8,7 @@ import (
 )
 
 type apkController struct {
-	service service.ApkSer
+	service service.ApkService
 }
 
 //
@@ -17,7 +17,7 @@ type apkController struct {
 //  @param g
 //
 func NewApkController(g *model.Routes) {
-	handler := apkController{service: serviceimpl.Apks}
+	handler := apkController{service: serviceimpl.NewApkService()}
 	g.Public.POST("getApkById", handler.GetApkById)
 }
 

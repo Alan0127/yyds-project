@@ -5,7 +5,6 @@ import (
 	"go.uber.org/zap"
 	"yyds-pro/config"
 	"yyds-pro/log"
-	"yyds-pro/middleware"
 	"yyds-pro/router"
 	"yyds-pro/server/mysql"
 	"yyds-pro/server/redis"
@@ -31,7 +30,9 @@ func init() {
 
 func main() {
 	g := gin.New()
-	g.Use(middleware.Logger())
 	router.Init(g)
-	g.Run(":8888")
+	err := g.Run(":8888")
+	if err != nil {
+		log.GetLogger().Info("start error!", zap.Any("err", err.Error()))
+	}
 }

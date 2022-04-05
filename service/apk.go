@@ -1,5 +1,5 @@
 package service
 
-type ApkSer interface {
+type ApkService interface {
 	GetApkById(id int)
 }
