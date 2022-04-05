@@ -8,7 +8,7 @@ import (
 )
 
 func LoadConfig() (appConfig model.AppConfig, err error) {
-	configFile, err := ioutil.ReadFile("./dev.yaml")
+	configFile, err := ioutil.ReadFile("./config/dev.yaml")
 	if err != nil {
 		log.Fatalf("yamlFile. Get err %v", err)
 	}

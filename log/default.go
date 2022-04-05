@@ -6,10 +6,11 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"strings"
+	"yyds-pro/trace"
 )
 
 var (
-	l        Logger
+	l        *Logger             //全局log实例
 	outWrite zapcore.WriteSyncer // IO输出
 )
 
@@ -20,17 +21,16 @@ type Logger struct {
 }
 
 func InitDefaultLog(opt ...ZapLogOption) {
-	l := &Logger{
+	l = &Logger{
 		opts: NewOption(opt...),
 	}
-	fmt.Println(l)
+	l.LoadCfg() //默认设置
 	l.initLog()
 }
 
 func (l *Logger) initLog() {
-	defer l.Logger.Sync()
 	outWrite = zapcore.AddSync(&lumberjack.Logger{
-		Filename:   l.opts.FileDir + "/" + "clean-arch" + ".log",
+		Filename:   l.opts.FileDir + "clean-log-info" + ".log",
 		MaxSize:    l.opts.MaxSize,
 		MaxBackups: l.opts.MaxBackUp,
 		MaxAge:     l.opts.MaxAge,
@@ -42,7 +42,7 @@ func (l *Logger) initLog() {
 	if err != nil {
 		panic(err)
 	}
-
+	defer l.Logger.Sync()
 }
 
 func (l *Logger) cores() zap.Option {
@@ -80,4 +80,23 @@ func (l *Logger) GetLevel() (level zapcore.Level) {
 	default:
 		return zapcore.DebugLevel //默认为调试模式
 	}
+}
+
+func GetLogger() *Logger {
+	if l == nil {
+		fmt.Println("Please initialize the hlog service first")
+		return nil
+	}
+	return l
+}
+
+func (l *Logger) InfoCtx(ctx *trace.Trace) {
+	fields := make([]zap.Field, 0)
+	fields = append(fields, zap.Any("traceId",
+		ctx.TraceId),
+		zap.Any("reqUrl", ctx.ReqUrl),
+		zap.Any("method", ctx.Method),
+		zap.Any("latency", ctx.Response.CostSeconds),
+		zap.Any("returnCode", ctx.Response.ErrorCode))
+	l.Info("trace ", fields...)
 }

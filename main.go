@@ -1,9 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"yyds-pro/config"
 	"yyds-pro/log"
+	"yyds-pro/middleware"
+	"yyds-pro/router"
 	"yyds-pro/server/mysql"
 	"yyds-pro/server/redis"
 )
@@ -11,17 +14,24 @@ import (
 //初始化工作
 func init() {
 	conf, err := config.LoadConfig()
+	log.InitDefaultLog(log.SetLevel("info"), log.SetPath("/logs/"))
+	l := log.GetLogger()
 	if err != nil {
-		fmt.Println(err.Error())
+		l.Info("load config error", zap.Any("error", err.Error()))
 	}
-	sqlErr := mysql.InitMysql(conf)
-	redisErr := redis.InitRedis(conf)
-	if sqlErr != nil || redisErr != nil {
-		fmt.Println(sqlErr, redisErr)
+	sqlErr := mysql.InitMysql(conf)   //初始化mysql
+	redisErr := redis.InitRedis(conf) //初始化redis
+	if sqlErr != nil {
+		l.Info("connect mysql error!", zap.Any("error", sqlErr.Error()))
 	}
-	log.InitDefaultLog(log.SetLevel("info"))
+	if redisErr != nil {
+		l.Info("connect redis error!", zap.Any("error", redisErr.Error()))
+	}
 }
 
 func main() {
-	//g := gin.New()
+	g := gin.New()
+	g.Use(middleware.Logger())
+	router.Init(g)
+	g.Run(":8888")
 }
