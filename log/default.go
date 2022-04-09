@@ -90,12 +90,12 @@ func GetLogger() *Logger {
 	return l
 }
 
-func (l *Logger) InfoCtx(ctx *trace.Trace) {
+func (l *Logger) InfoCtx(ctx *trace.Trace, err error) {
 	fields := make([]zap.Field, 0)
 	fields = append(fields, zap.Any("traceId",
 		ctx.TraceId),
-		zap.Any("reqUrl", ctx.ReqUrl),
-		zap.Any("method", ctx.Method),
+		zap.Any("reqUrl", ctx.Req.ReqUrl),
+		zap.Any("method", ctx.Req.Method),
 		zap.Any("latency", ctx.Response.CostSeconds),
 		zap.Any("returnCode", ctx.Response.ErrorCode))
 	l.Info("trace ", fields...)

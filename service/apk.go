@@ -1,5 +1,7 @@
 package service
 
+import "yyds-pro/trace"
+
 type ApkService interface {
-	GetApkById(id int)
+	GetApkById(ctx *trace.Trace, id int)
 }

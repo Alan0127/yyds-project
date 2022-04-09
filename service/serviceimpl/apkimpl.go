@@ -3,6 +3,7 @@ package serviceimpl
 import (
 	"yyds-pro/repository"
 	"yyds-pro/repository/repoimpl"
+	"yyds-pro/trace"
 )
 
 type ApkService struct {
@@ -15,6 +16,6 @@ func NewApkService() ApkService {
 	}
 }
 
-func (s ApkService) GetApkById(id int) {
-	s.ApkRepo.FindApkById(id)
+func (s ApkService) GetApkById(ctx *trace.Trace, id int) {
+	s.ApkRepo.FindApkById(ctx, id)
 }

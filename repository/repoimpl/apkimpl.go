@@ -3,6 +3,7 @@ package repoimpl
 import (
 	"gorm.io/gorm"
 	"yyds-pro/server/mysql"
+	"yyds-pro/trace"
 )
 
 type ApkRepository struct {
@@ -15,6 +16,5 @@ func NewApkRepository() *ApkRepository {
 	}
 }
 
-func (a ApkRepository) FindApkById(id int) {
-
+func (a ApkRepository) FindApkById(ctx *trace.Trace, id int) {
 }

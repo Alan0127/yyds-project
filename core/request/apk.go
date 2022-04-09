@@ -2,6 +2,9 @@ package request
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"yyds-pro/core"
+	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/service"
 	"yyds-pro/service/serviceimpl"
@@ -21,7 +24,14 @@ func NewApkController(g *model.Routes) {
 	g.Public.POST("getApkById", handler.GetApkById)
 }
 
-func (a apkController) GetApkById(context *gin.Context) {
+func (a apkController) GetApkById(c *gin.Context) {
+	_, traceCtx := core.GetTrace(c)
+	var i int
+	err := c.ShouldBindWith(&i, binding.JSON)
+	if err != nil {
+		log.GetLogger().InfoCtx(traceCtx, err)
+	}
+
 	id := 1
-	a.service.GetApkById(id)
+	a.service.GetApkById(traceCtx, id)
 }

@@ -12,11 +12,12 @@ func Logger() gin.HandlerFunc {
 		l := log.GetLogger()
 		trace := trace2.NewTraceContext(c)
 		start := time.Now()
+		//记录trace到contex中
+		c.Set("traceId", trace.TraceId)
+		c.Set(trace.TraceId, trace)
+		c.Next()
 		requestUrl := c.Request.RequestURI
 		method := c.Request.Method
-		//记录trace到contex中
-		c.Set("myProject_ctx_key", trace)
-		c.Next()
 		latency := time.Now().Sub(start).Seconds() //请求时间
 		returnCode, _ := c.Get("returnCode")
 		//记录trace信息

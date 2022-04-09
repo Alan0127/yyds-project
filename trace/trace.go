@@ -3,24 +3,23 @@ package trace
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"yyds-pro/common"
 )
 
 const traceIDHeader = "X-TRACE-ID"
 
 type Trace struct {
+	l *zap.Logger
 	context.Context
 	TraceId  string
-	ReqUrl   string
-	Method   string
 	Req      *Request
 	Response *Response
-	Flag     bool //请求是否成功
+	Flag     string //请求是否成功
 }
 
 // Request 请求信息
 type Request struct {
-	TTL    string      `json:"ttl"` // 请求超时时间
 	ReqUrl string      `json:"reqUrl"`
 	Method string      `json:"method"` // 请求方式
 	Body   interface{} `json:"body"`   // 请求 Body 信息
@@ -48,12 +47,12 @@ func NewTraceContext(ctx *gin.Context) *Trace {
 }
 
 func (tc *Trace) WithReqUrl(url string) *Trace {
-	tc.ReqUrl = url
+	tc.Req.ReqUrl = url
 	return tc
 }
 
 func (tc *Trace) WithMethod(method string) *Trace {
-	tc.Method = method
+	tc.Req.Method = method
 	return tc
 }
 

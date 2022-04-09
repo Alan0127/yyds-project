@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"errors"
+	"fmt"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 	"yyds-pro/log"
+	"yyds-pro/trace"
 )
 
 type Logger struct {
@@ -63,6 +65,10 @@ func (l Logger) Error(ctx context.Context, str string, args ...interface{}) {
 }
 
 func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+	traceCtx, ok := ctx.(*trace.Trace)
+	if ok {
+		fmt.Println(traceCtx)
+	}
 	if l.LogLevel <= 0 {
 		return
 	}

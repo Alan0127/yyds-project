@@ -1,5 +1,7 @@
 package repository
 
+import "yyds-pro/trace"
+
 type ApkRepo interface {
-	FindApkById(id int)
+	FindApkById(ctx *trace.Trace, id int)
 }
