@@ -9,7 +9,7 @@ import (
 
 func Init(g *gin.Engine) {
 	groupV1 := g.Group("/proApi/v1/")
-	request.NewApkController(CreateRoute(groupV1, "/apk/"))
+	request.NewAppController(CreateRoute(groupV1, "/apk/"))
 	request.NewUserController(CreateRoute(groupV1, "/user/"))
 
 }

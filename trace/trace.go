@@ -3,14 +3,12 @@ package trace
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"yyds-pro/common"
 )
 
 const traceIDHeader = "X-TRACE-ID"
 
 type Trace struct {
-	l *zap.Logger
 	context.Context
 	TraceId  string
 	Req      *Request

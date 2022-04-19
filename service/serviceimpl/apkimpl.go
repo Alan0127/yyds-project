@@ -1,6 +1,7 @@
 package serviceimpl
 
 import (
+	"yyds-pro/model"
 	"yyds-pro/repository"
 	"yyds-pro/repository/repoimpl"
 	"yyds-pro/trace"
@@ -16,6 +17,6 @@ func NewApkService() ApkService {
 	}
 }
 
-func (s ApkService) GetApkById(ctx *trace.Trace, id int) {
-	s.ApkRepo.FindApkById(ctx, id)
+func (s ApkService) GetApkById(ctx *trace.Trace, id int) (model.App, error) {
+	return s.ApkRepo.FindApkById(ctx, id)
 }
