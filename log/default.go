@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	l        *Logger             //全局log实例
+	L        *Logger             //全局log实例
 	outWrite zapcore.WriteSyncer // IO输出
 )
 
@@ -21,11 +21,11 @@ type Logger struct {
 }
 
 func InitDefaultLog(opt ...ZapLogOption) {
-	l = &Logger{
+	L = &Logger{
 		opts: NewOption(opt...),
 	}
-	l.LoadCfg() //默认设置
-	l.initLog()
+	L.LoadCfg() //默认设置
+	L.initLog()
 }
 
 func (l *Logger) initLog() {
@@ -83,28 +83,33 @@ func (l *Logger) GetLevel() (level zapcore.Level) {
 }
 
 func GetLogger() *Logger {
-	if l == nil {
+	if L == nil {
 		fmt.Println("Please initialize the hlog service first")
 		return nil
 	}
-	return l
+	return L
 }
 
 func (l *Logger) InfoCtx(ctx *trace.Trace) {
 	fields := make([]zap.Field, 0)
 	fields = append(fields,
+		zap.Any("flag", ctx.Flag),
 		zap.Any("traceId", ctx.TraceId),
-		zap.Any("reqUrl", ctx.Req.ReqUrl),
-		zap.Any("method", ctx.Req.Method),
-		zap.Any("latency", ctx.Response.CostSeconds),
-		zap.Any("returnCode", ctx.Response.ErrorCode))
+		zap.Any("request", ctx.Req),
+		zap.Any("response", ctx.Response),
+		zap.Any("sql", ctx.Sql),
+	)
 
 	l.Info("trace ", fields...)
 }
 
-func ErrorWithCtx(ctx *trace.Trace) {
+func (l *Logger) ErrorCtx(ctx *trace.Trace, err error) {
 	fields := make([]zap.Field, 0)
 	fields = append(fields,
+		zap.Any("flag", ctx.Flag),
+		zap.Any("error", err),
 		zap.Any("traceId", ctx.TraceId),
+		zap.Any("request", ctx.Req),
 	)
+	l.Error("trace", fields...)
 }

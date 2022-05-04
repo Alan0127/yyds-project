@@ -17,13 +17,19 @@ func NewApkRepository() *AppRepository {
 	}
 }
 
-func (a AppRepository) FindApkById(ctx *trace.Trace, id int) (res model.App, err error) {
+func (a AppRepository) FindApkById(ctx *trace.Trace, id int) (res model.AppInfo, err error) {
 	err = a.AppDb.WithContext(ctx).Raw(`select 
+												id,
 												app_name,
+												app_status,
+												app_type,
+												app_version,
+												app_img_id,
+												app_video_id,
+												app_link ,
 												app_online_time,
-												app_language,
-												app_desc 
+												app_update_time
 											from app_info 
-											where app_id = ?`, id).Scan(&res).Error
+											where id = ?`, id).Scan(&res).Error
 	return
 }

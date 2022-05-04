@@ -6,5 +6,5 @@ import (
 )
 
 type ApkRepo interface {
-	FindApkById(ctx *trace.Trace, id int) (model.App, error)
+	FindApkById(ctx *trace.Trace, id int) (model.AppInfo, error)
 }

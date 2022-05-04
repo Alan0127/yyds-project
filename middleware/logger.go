@@ -18,11 +18,10 @@ func Logger() gin.HandlerFunc {
 		requestUrl := c.Request.RequestURI
 		method := c.Request.Method
 		latency := time.Now().Sub(start).Seconds() //请求时间
-		returnCode, _ := c.Get("returnCode")       //返回状态码
 		//记录trace信息
 		trace.WithReqUrl(requestUrl).
 			WithMethod(method).
-			WithLatency(latency).WithCode(returnCode.(int))
+			WithLatency(latency)
 		l.InfoCtx(trace)
 	}
 }

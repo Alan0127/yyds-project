@@ -17,6 +17,6 @@ func NewApkService() ApkService {
 	}
 }
 
-func (s ApkService) GetApkById(ctx *trace.Trace, id int) (model.App, error) {
+func (s ApkService) GetApkById(ctx *trace.Trace, id int) (model.AppInfo, error) {
 	return s.ApkRepo.FindApkById(ctx, id)
 }

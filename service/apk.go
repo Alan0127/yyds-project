@@ -6,5 +6,5 @@ import (
 )
 
 type ApkService interface {
-	GetApkById(ctx *trace.Trace, id int) (model.App, error)
+	GetApkById(ctx *trace.Trace, id int) (model.AppInfo, error)
 }

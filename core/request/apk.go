@@ -1,10 +1,9 @@
 package request
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"yyds-pro/core"
+	"yyds-pro/core/response"
 	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/service"
@@ -27,13 +26,18 @@ func NewAppController(g *model.Routes) {
 
 func (a apkController) GetApkById(c *gin.Context) {
 	_, traceCtx := core.GetTrace(c)
-	var i int
-	err := c.ShouldBindWith(&i, binding.JSON)
+	var id model.ReqId
+	err := core.BindReqWithContext(traceCtx, c, &id)
 	if err != nil {
-		log.GetLogger().InfoCtx(traceCtx)
+		log.L.ErrorCtx(traceCtx, err)
+		response.ResError(c, traceCtx, err)
+		return
 	}
-
-	id := 1
-	res, err := a.service.GetApkById(traceCtx, id)
-	fmt.Println(res)
+	res, err := a.service.GetApkById(traceCtx, id.Id)
+	if err != nil {
+		log.L.ErrorCtx(traceCtx, err)
+		response.ResError(c, traceCtx, err)
+		return
+	}
+	response.ResSuccess(c, traceCtx, res)
 }

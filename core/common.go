@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"yyds-pro/trace"
 )
 
@@ -16,10 +17,24 @@ import (
 func GetTrace(c *gin.Context) (err error, traceCtx *trace.Trace) {
 	var ok bool
 	traceId, _ := c.Get("traceId")
+	if len(traceId.(string)) == 0 {
+		err = errors.New("get traceId error")
+		return
+	}
 	ctx, _ := c.Get(traceId.(string))
 	if traceCtx, ok = ctx.(*trace.Trace); ok {
 		return
 	} else {
-		return errors.New("trace error"), traceCtx
+		err = errors.New("trace error")
+		return
 	}
+}
+
+func BindReqWithContext(traceCtx *trace.Trace, c *gin.Context, data interface{}) (err error) {
+	err = c.ShouldBindWith(data, binding.JSON)
+	if err != nil {
+		return
+	}
+	traceCtx.Req.Body = data
+	return
 }
