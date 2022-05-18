@@ -16,4 +16,5 @@ func main() {
 	if err != nil {
 		log.GetLogger().Info("start error!", zap.Any("err", err.Error()))
 	}
+
 }

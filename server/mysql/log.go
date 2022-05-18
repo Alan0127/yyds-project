@@ -59,6 +59,15 @@ func (l Logger) Error(ctx context.Context, str string, args ...interface{}) {
 	log.L.Sugar().Debugf(str, args...)
 }
 
+//
+//  Trace
+//  @Description: 日志追踪
+//  @receiver l
+//  @param ctx
+//  @param begin
+//  @param fc
+//  @param err
+//
 func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
 	traceCtx, ok := ctx.(*trace.Trace)
 	if !ok {

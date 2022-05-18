@@ -1,9 +1,10 @@
 package redis
 
 import (
-	"fmt"
 	"github.com/go-redis/redis"
+	"time"
 	"yyds-pro/model"
+	"yyds-pro/trace"
 )
 
 var DefaultRedisClient *redis.Client
@@ -23,7 +24,59 @@ func InitRedis(config model.AppConfig) (err error) {
 	return
 }
 
-func PipelineGetHashField(keyList []string, filed string) (err error, valList []string) {
+//
+//  PipelineSetHashField
+//  @Description: 管道批量set value
+//  @param ctx
+//  @param keyList
+//  @param filed
+//  @return err
+//  @return valList
+//
+func PipelineSetHashField(ctx trace.Trace, keymap map[string]interface{}, filed string) (err error, valList []string) {
+	ctx.Redis.Flag = true
+	var errList []error
+	pipeClient := DefaultRedisClient.Pipeline()
+	for key, val := range keymap {
+		pipeClient.HSet(key, filed, val)
+	}
+	res, err := pipeClient.Exec()
+	if err != nil {
+		if err != redis.Nil {
+			ctx.Redis.Error = err
+			ctx.Redis.Flag = false
+			return
+		}
+	}
+	for _, cmdRes := range res {
+		var val string
+		// 此处断言类型为在for循环内执行的命令返回的类型,上面HGet返回的即为*redis.StringCmd类型
+		// 处理方式和直接调用同样处理即可
+		cmd, ok := cmdRes.(*redis.StringCmd)
+		if ok {
+			val, err = cmd.Result()
+			if err != nil {
+				errList = append(errList, err)
+			}
+		}
+		valList = append(valList, val)
+	}
+	ctx.Redis.Error = errList
+	ctx.Redis.Res = valList
+	return
+}
+
+//
+//  PipelineGetHashField
+//  @Description: 使用管道批量获取value
+//  @param keyList
+//  @param filed
+//  @return err
+//  @return valList
+//
+func PipelineGetHashField(ctx trace.Trace, keyList []string, filed string) (err error, valList []string) {
+	ctx.Redis.Flag = true
+	var errList []error
 	pipeClient := DefaultRedisClient.Pipeline()
 	for _, key := range keyList {
 		pipeClient.HGet(key, filed)
@@ -31,6 +84,8 @@ func PipelineGetHashField(keyList []string, filed string) (err error, valList []
 	res, err := pipeClient.Exec()
 	if err != nil {
 		if err != redis.Nil {
+			ctx.Redis.Error = err
+			ctx.Redis.Flag = false
 			return
 		}
 		/********** ！！！！！！！！！！*************/
@@ -45,15 +100,27 @@ func PipelineGetHashField(keyList []string, filed string) (err error, valList []
 		if ok {
 			val, err = cmd.Result()
 			if err != nil {
-				fmt.Println(err)
+				errList = append(errList, err)
 			}
 		}
 		valList = append(valList, val)
 	}
+	ctx.Redis.Error = errList
+	ctx.Redis.Res = valList
 	return
 }
 
-func PipelineDelHashField(keyList []string, filed string) (err error, valList []string) {
+//
+//  PipelineDelHashField
+//  @Description: 使用管道批量删除value
+//  @param keyList
+//  @param filed
+//  @return err
+//  @return valList
+//
+func PipelineDelHashField(ctx trace.Trace, keyList []string, filed string) (err error, valList []string) {
+	ctx.Redis.Flag = true
+	var errList []error
 	pipeClient := DefaultRedisClient.Pipeline()
 	for _, key := range keyList {
 		pipeClient.HDel(key, filed)
@@ -61,6 +128,7 @@ func PipelineDelHashField(keyList []string, filed string) (err error, valList []
 	res, err := pipeClient.Exec()
 	if err != nil {
 		if err != redis.Nil {
+			ctx.Redis.Error = err
 			return
 		}
 	}
@@ -70,10 +138,52 @@ func PipelineDelHashField(keyList []string, filed string) (err error, valList []
 		if ok {
 			val, err = cmd.Result()
 			if err != nil {
-				fmt.Println(err)
+				errList = append(errList, err)
 			}
 		}
 		valList = append(valList, val)
+	}
+	ctx.Redis.Error = errList
+	ctx.Redis.Res = valList
+	return
+}
+
+//
+//  SetRedisCtx
+//  @Description: redis set string operation
+//  @param ctx
+//  @param key
+//  @param value
+//  @param expireTime
+//  @return err
+//
+func SetRedisCtx(ctx *trace.Trace, key, value string, expireTime time.Duration) (err error) {
+	res, err := DefaultRedisClient.Set(key, value, expireTime).Result()
+	ctx.Redis.Res = res
+	ctx.Redis.Flag = true
+	if err != nil {
+		ctx.Redis.Error = err
+		ctx.Redis.Flag = false
+		return
+	}
+	return
+}
+
+//
+//  GetRedisCtx
+//  @Description: redis get string operation
+//  @param ctx
+//  @param key
+//  @return err
+//
+func GetRedisCtx(ctx *trace.Trace, key string) (err error) {
+	res, err := DefaultRedisClient.Get(key).Result()
+	ctx.Redis.Res = res
+	ctx.Redis.Flag = true
+	if err != nil {
+		ctx.Redis.Error = err
+		ctx.Redis.Flag = false
+		return
 	}
 	return
 }

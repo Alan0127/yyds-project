@@ -30,6 +30,14 @@ func GetTrace(c *gin.Context) (err error, traceCtx *trace.Trace) {
 	}
 }
 
+//
+//  BindReqWithContext
+//  @Description: 绑定参数
+//  @param traceCtx
+//  @param c
+//  @param data
+//  @return err
+//
 func BindReqWithContext(traceCtx *trace.Trace, c *gin.Context, data interface{}) (err error) {
 	err = c.ShouldBindWith(data, binding.JSON)
 	if err != nil {

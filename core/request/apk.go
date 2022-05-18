@@ -22,8 +22,15 @@ type apkController struct {
 func NewAppController(g *model.Routes) {
 	handler := apkController{service: serviceimpl.NewApkService()}
 	g.Public.POST("getAppInfoById", handler.GetApkById)
+	g.Public.POST("order", handler.ChangeOrderStatus)
 }
 
+//
+//  GetApkById
+//  @Description: 根据appId获取应用详情
+//  @receiver a
+//  @param c
+//
 func (a apkController) GetApkById(c *gin.Context) {
 	_, traceCtx := core.GetTrace(c)
 	var id model.ReqId
@@ -40,4 +47,22 @@ func (a apkController) GetApkById(c *gin.Context) {
 		return
 	}
 	response.ResSuccess(c, traceCtx, res)
+}
+
+func (a apkController) ChangeOrderStatus(c *gin.Context) {
+	_, traceCtx := core.GetTrace(c)
+	var orderReq model.OrderReq
+	err := core.BindReqWithContext(traceCtx, c, &orderReq)
+	if err != nil {
+		log.L.ErrorCtx(traceCtx, err)
+		response.ResError(c, traceCtx, err)
+		return
+	}
+	err = a.service.ChangeTaskOrderStatusByOrderInfo(traceCtx, orderReq)
+	if err != nil {
+		log.L.ErrorCtx(traceCtx, err)
+		response.ResError(c, traceCtx, err)
+		return
+	}
+	response.ResSuccess(c, traceCtx, "")
 }

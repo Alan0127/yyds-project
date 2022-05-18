@@ -28,9 +28,14 @@ func InitDefaultLog(opt ...ZapLogOption) {
 	L.initLog()
 }
 
+//
+//  initLog
+//  @Description: log的初始化
+//  @receiver l
+//
 func (l *Logger) initLog() {
 	outWrite = zapcore.AddSync(&lumberjack.Logger{
-		Filename:   l.opts.FileDir + "clean-log-info" + ".log",
+		Filename:   l.opts.FileDir + "clean-log-info.log",
 		MaxSize:    l.opts.MaxSize,
 		MaxBackups: l.opts.MaxBackUp,
 		MaxAge:     l.opts.MaxAge,
@@ -51,10 +56,7 @@ func (l *Logger) cores() zap.Option {
 		return lvl >= l.GetLevel()
 	})
 	var cores []zapcore.Core
-	cores = append(cores, []zapcore.Core{
-		zapcore.NewCore(encoder, outWrite, priority), //ioCore
-	}...)
-
+	cores = append(cores, zapcore.NewCore(encoder, outWrite, priority))
 	//WrapCore包装或替换Logger的底层zapcore.Core
 	return zap.WrapCore(func(c zapcore.Core) zapcore.Core { //返回的是core列表
 		return zapcore.NewTee(cores...)
@@ -90,6 +92,12 @@ func GetLogger() *Logger {
 	return L
 }
 
+//
+//  InfoCtx
+//  @Description: trace打印info日志
+//  @receiver l
+//  @param ctx
+//
 func (l *Logger) InfoCtx(ctx *trace.Trace) {
 	fields := make([]zap.Field, 0)
 	fields = append(fields,
@@ -103,6 +111,13 @@ func (l *Logger) InfoCtx(ctx *trace.Trace) {
 	l.Info("trace ", fields...)
 }
 
+//
+//  ErrorCtx
+//  @Description: trace打印Error日志
+//  @receiver l
+//  @param ctx
+//  @param err
+//
 func (l *Logger) ErrorCtx(ctx *trace.Trace, err error) {
 	fields := make([]zap.Field, 0)
 	fields = append(fields,

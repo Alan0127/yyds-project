@@ -7,6 +7,11 @@ import (
 	trace2 "yyds-pro/trace"
 )
 
+//
+//  Logger
+//  @Description: log中间件，实现日志链路全流程追踪
+//  @return gin.HandlerFunc
+//
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		l := log.GetLogger()

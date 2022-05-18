@@ -17,6 +17,15 @@ func NewApkRepository() *AppRepository {
 	}
 }
 
+//
+//  FindApkById
+//  @Description: FindApkById具体实现，根据id查询数据返回
+//  @receiver a
+//  @param ctx
+//  @param id
+//  @return res
+//  @return err
+//
 func (a AppRepository) FindApkById(ctx *trace.Trace, id int) (res model.AppInfo, err error) {
 	err = a.AppDb.WithContext(ctx).Raw(`select 
 												id,
@@ -31,5 +40,16 @@ func (a AppRepository) FindApkById(ctx *trace.Trace, id int) (res model.AppInfo,
 												app_update_time
 											from app_info 
 											where id = ?`, id).Scan(&res).Error
+	return
+}
+
+func (a AppRepository) ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderReq model.OrderReq, cal uint) (err error) {
+	err = a.AppDb.WithContext(ctx).Raw(`UPDATE 
+											  task_order_user t 
+											SET 
+											  t.order_num = ? 
+											WHERE 
+											  t.user_id = ? 
+											  AND t.task_id = ?`, cal, orderReq.UerId, orderReq.TaskId).Error
 	return
 }

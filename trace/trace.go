@@ -12,6 +12,7 @@ type Trace struct {
 	context.Context
 	TraceId  string
 	Sql      Sql
+	Redis    RedisRes
 	Req      Request
 	Response Response
 	Flag     bool //请求是否成功
@@ -28,6 +29,12 @@ type Request struct {
 	ReqUrl string      `json:"reqUrl"`
 	Method string      `json:"method"` // 请求方式
 	Body   interface{} `json:"body"`   // 请求参数
+}
+
+type RedisRes struct {
+	Res   interface{} `json:"res"`
+	Error interface{} `json:"error"`
+	Flag  bool        `json:"flag"`
 }
 
 // Response 响应信息
