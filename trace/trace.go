@@ -32,7 +32,6 @@ type Request struct {
 }
 
 type RedisRes struct {
-	Res   interface{} `json:"res"`
 	Error interface{} `json:"error"`
 	Flag  bool        `json:"flag"`
 }

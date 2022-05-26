@@ -105,9 +105,9 @@ func (l *Logger) InfoCtx(ctx *trace.Trace) {
 		zap.Any("traceId", ctx.TraceId),
 		zap.Any("request", ctx.Req),
 		zap.Any("response", ctx.Response),
+		zap.Any("redis", ctx.Redis),
 		zap.Any("sql", ctx.Sql),
 	)
-
 	l.Info("trace ", fields...)
 }
 

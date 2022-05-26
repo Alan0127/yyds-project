@@ -10,7 +10,9 @@ import (
 //  @Description: repo抽象接口
 //
 type ApkRepo interface {
+	GetAllApps(ctx *trace.Trace, req model.GetAppsReq) ([]model.AppInfos, error)
+
 	FindApkById(ctx *trace.Trace, id int) (model.AppInfo, error)
 
-	ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderReq model.OrderReq, cal uint) (err error)
+	ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderReq model.OrderReq, cal int) (err error)
 }

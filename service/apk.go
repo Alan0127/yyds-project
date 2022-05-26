@@ -11,6 +11,15 @@ import (
 //
 type ApkService interface {
 	//
+	//  GetAllApps
+	//  @Description: GetAllApps接口方法
+	//  @param ctx
+	//  @param req
+	//  @return model.AppInfos
+	//  @return error
+	//
+	GetAllApps(ctx *trace.Trace, req model.GetAppsReq) ([]model.AppInfos, error)
+	//
 	//  GetApkById
 	//  @Description: GetApkById接口方法
 	//  @param ctx

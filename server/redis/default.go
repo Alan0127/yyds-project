@@ -25,6 +25,35 @@ func InitRedis(config model.AppConfig) (err error) {
 }
 
 //
+//  HashGetWithCtx
+//  @Description: hashSet
+//  @param ctx
+//  @param filed
+//  @param key
+//  @return res
+//  @return err
+//
+func HashGetWithCtx(ctx *trace.Trace, filed, key string) (res string, err error) {
+	res, err = DefaultRedisClient.HGet(filed, key).Result()
+	ctx.Redis.Flag = true
+	if err != nil {
+		ctx.Redis.Flag = false
+		ctx.Redis.Error = err
+	}
+	return
+}
+
+func HashSetWithContext(ctx *trace.Trace, filed, key string, value interface{}) (err error) {
+	_, err = DefaultRedisClient.HSet(filed, key, value).Result()
+	ctx.Redis.Flag = true
+	if err != nil {
+		ctx.Redis.Flag = false
+		ctx.Redis.Error = err
+	}
+	return
+}
+
+//
 //  PipelineSetHashField
 //  @Description: 管道批量set value
 //  @param ctx
@@ -62,7 +91,6 @@ func PipelineSetHashField(ctx trace.Trace, keymap map[string]interface{}, filed 
 		valList = append(valList, val)
 	}
 	ctx.Redis.Error = errList
-	ctx.Redis.Res = valList
 	return
 }
 
@@ -106,7 +134,6 @@ func PipelineGetHashField(ctx trace.Trace, keyList []string, filed string) (err 
 		valList = append(valList, val)
 	}
 	ctx.Redis.Error = errList
-	ctx.Redis.Res = valList
 	return
 }
 
@@ -144,7 +171,6 @@ func PipelineDelHashField(ctx trace.Trace, keyList []string, filed string) (err 
 		valList = append(valList, val)
 	}
 	ctx.Redis.Error = errList
-	ctx.Redis.Res = valList
 	return
 }
 
@@ -158,8 +184,7 @@ func PipelineDelHashField(ctx trace.Trace, keyList []string, filed string) (err 
 //  @return err
 //
 func SetRedisCtx(ctx *trace.Trace, key, value string, expireTime time.Duration) (err error) {
-	res, err := DefaultRedisClient.Set(key, value, expireTime).Result()
-	ctx.Redis.Res = res
+	_, err = DefaultRedisClient.Set(key, value, expireTime).Result()
 	ctx.Redis.Flag = true
 	if err != nil {
 		ctx.Redis.Error = err
@@ -177,8 +202,7 @@ func SetRedisCtx(ctx *trace.Trace, key, value string, expireTime time.Duration) 
 //  @return err
 //
 func GetRedisCtx(ctx *trace.Trace, key string) (err error) {
-	res, err := DefaultRedisClient.Get(key).Result()
-	ctx.Redis.Res = res
+	_, err = DefaultRedisClient.Get(key).Result()
 	ctx.Redis.Flag = true
 	if err != nil {
 		ctx.Redis.Error = err

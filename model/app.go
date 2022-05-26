@@ -1,5 +1,11 @@
 package model
 
+type language string
+
+type GetAppsReq struct {
+	Language language `json:"language"`
+}
+
 type ReqId struct {
 	Id int `json:"id"`
 }
@@ -29,4 +35,14 @@ type AppInfo struct {
 	AppLink       int    `json:"appLink" gorm:"column:app_link"`
 	AppOnlineTime string `json:"appOnlineTime" gorm:"column:app_online_time"`
 	AppUpdateTime string `json:"appUpdateTime" gorm:"column:app_update_time"`
+}
+
+type AppInfos struct {
+	AppType     int    `json:"appType" gorm:"column:app_type"`
+	AppStatus   int    `json:"appStatus" gorm:"column:app_status"`
+	AppVersion  string `json:"appVersion" gorm:"column:app_version"`
+	AppImgId    int    `json:"appImgId" gorm:"column:app_img_id"`
+	AppVideoId  int    `json:"appVideoId" gorm:"column:app_video_id"`
+	AppDesc     string `json:"appDesc" gorm:"column:app_description"`
+	AppNameLang string `json:"appNameLang" gorm:"column:app_name_lang"`
 }
