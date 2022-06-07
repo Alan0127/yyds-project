@@ -46,3 +46,11 @@ type AppInfos struct {
 	AppDesc     string `json:"appDesc" gorm:"column:app_description"`
 	AppNameLang string `json:"appNameLang" gorm:"column:app_name_lang"`
 }
+
+type UserPurchase struct {
+	UserName      string `json:"userName" gorm:"column:user_name"`
+	UserPass      string `json:"userPass" gorm:"column:user_pass"`
+	UserCountry   string `json:"userCountry" gorm:"column:user_country"`
+	ActivityId    int    `json:"taskId" column:"id"`
+	TotalIntegral int    `json:"totalIntegral" gorm:"column:total_integral"`
+}

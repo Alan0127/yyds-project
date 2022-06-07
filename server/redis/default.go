@@ -2,7 +2,10 @@ package redis
 
 import (
 	"github.com/go-redis/redis"
+	"strconv"
 	"time"
+	_const "yyds-pro/core/const"
+	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/trace"
 )
@@ -210,4 +213,56 @@ func GetRedisCtx(ctx *trace.Trace, key string) (err error) {
 		return
 	}
 	return
+}
+
+//
+//  FilterEval
+//  @Description: 执行限流lua脚本
+//  @param sha
+//  @param args
+//  @return val
+//  @return err
+//
+func FilterEval(ctx *trace.Trace, sha string, args []string) (val interface{}, err error) {
+	val, err = DefaultRedisClient.Eval(sha, args).Result()
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+		ctx.Redis.Error = err
+		return
+	}
+	return
+}
+
+//
+//  EvalSHA
+//  @Description: 执行抢积分lua脚本
+//  @param sha
+//  @param args
+//  @return interface{}
+//  @return error
+//
+func EvalSHA(ctx *trace.Trace, sha string, args []string) (val interface{}, err error) {
+	val, err = DefaultRedisClient.Eval(sha, args).Result()
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+		ctx.Redis.Error = err
+		return
+	}
+	return
+}
+
+//
+//  GetIntegralByidFromCache
+//  @Description: 查询缓存的积分
+//  @param id
+//  @return val
+//  @return err
+//
+func GetIntegralByIdFromCache(ctx *trace.Trace, id int) (val string, err error) {
+	val, err = DefaultRedisClient.HGet(_const.IntegralInfo, strconv.Itoa(id)).Result()
+	if err != nil {
+		ctx.Redis.Error = err
+	}
+	return
+
 }

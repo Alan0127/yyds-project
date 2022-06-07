@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"context"
-	"fmt"
 	"go.uber.org/zap"
 	gormLogger "gorm.io/gorm/logger"
 	"strings"
@@ -76,7 +75,6 @@ func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	}
 	sql, _ := fc()
 	str := strings.Replace(strings.Replace(sql, "\n", "", -1), "\t", "", -1)
-	fmt.Println("str: ", str)
 	if err != nil {
 		traceCtx.Sql.Err = err
 		traceCtx.Sql.SqlStr = str

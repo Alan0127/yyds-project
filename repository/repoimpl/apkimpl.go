@@ -2,6 +2,7 @@ package repoimpl
 
 import (
 	"gorm.io/gorm"
+	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/server/mysql"
 	"yyds-pro/trace"
@@ -23,6 +24,9 @@ func (a AppRepository) GetAllApps(ctx *trace.Trace, req model.GetAppsReq) (res [
 											FROM app_info ai
 												LEFT JOIN app_desc ad ON ai.id = ad.app_id
 											WHERE ad.app_language = ?`, req.Language).Scan(&res).Error
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+	}
 	return
 }
 
@@ -49,6 +53,9 @@ func (a AppRepository) FindApkById(ctx *trace.Trace, id int) (res model.AppInfo,
 												app_update_time
 											from app_info 
 											where id = ?`, id).Scan(&res).Error
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+	}
 	return
 }
 
@@ -57,9 +64,26 @@ func (a AppRepository) ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderR
 	err = a.AppDb.WithContext(ctx).Raw(`UPDATE 
 											  task_order_user t 
 											SET 
-											  t.order_num = t.order_num + ? 
+											  t.task_order_status = ?
 											WHERE 
 											  t.user_id = ? 
 											  AND t.task_id = ?`, cal, orderReq.UerId, orderReq.TaskId).Scan(&i).Error
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+	}
+	return
+}
+
+func (a AppRepository) GetTaskUserOrderStatus(ctx *trace.Trace, orderReq model.OrderReq) (status int, err error) {
+	err = a.AppDb.WithContext(ctx).Raw(`select 
+											  status 
+											from 
+											  task_order_user t 
+											where 
+											  t.task_id = ? 
+											  and t.user_id = ?`, orderReq.TaskId, orderReq.UerId).Scan(&status).Error
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+	}
 	return
 }

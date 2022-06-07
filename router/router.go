@@ -10,6 +10,7 @@ import (
 func Init(g *gin.Engine) {
 	groupV1 := g.Group("/proApi/v1/")
 	request.NewAppController(CreateRoute(groupV1, "/apk/"))
+	request.NewRateController(CreateRoute(groupV1, "/rateLimiterAndIntegral/"))
 	request.NewUserController(CreateRoute(groupV1, "/user/"))
 
 }

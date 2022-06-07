@@ -1,7 +1,6 @@
 package core
 
 import (
-	"go.uber.org/zap"
 	"yyds-pro/config"
 	"yyds-pro/log"
 	"yyds-pro/server/mysql"
@@ -9,18 +8,17 @@ import (
 )
 
 func InitDefaultConnections() {
-	conf, err := config.LoadConfig()
 	log.InitDefaultLog(log.SetLevel("info"), log.SetPath("/logs/"))
-	l := log.GetLogger()
+	conf, err := config.LoadConfig()
 	if err != nil {
-		l.Info("load config error", zap.Any("error", err.Error()))
+		panic("load config error")
 	}
 	sqlErr := mysql.InitMysql(conf) //初始化mysql
 	if sqlErr != nil {
-		l.Info("connect mysql error!", zap.Any("error", sqlErr.Error()))
+		panic("connect mysql error!")
 	}
 	redisErr := redis.InitRedis(conf) //初始化redis
 	if redisErr != nil {
-		l.Info("connect redis error!", zap.Any("error", redisErr.Error()))
+		panic("connect redis error!")
 	}
 }

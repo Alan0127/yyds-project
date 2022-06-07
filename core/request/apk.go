@@ -1,8 +1,11 @@
 package request
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"yyds-pro/common"
 	"yyds-pro/core"
+	"yyds-pro/core/const"
 	"yyds-pro/core/response"
 	"yyds-pro/model"
 	"yyds-pro/service"
@@ -20,9 +23,10 @@ type apkController struct {
 //
 func NewAppController(g *model.Routes) {
 	handler := apkController{service: serviceimpl.NewApkService()}
+	g.Public.POST("getAppAppInfos", handler.GetAllApps)
 	g.Public.POST("getAppInfoById", handler.GetApkById)
 	g.Public.POST("order", handler.ChangeOrderStatus)
-	g.Public.POST("getAppAppInfos", handler.GetAllApps)
+	g.Public.POST("RushPurchase", handler.RushPurchase)
 }
 
 func (a apkController) GetAllApps(c *gin.Context) {
@@ -38,7 +42,8 @@ func (a apkController) GetAllApps(c *gin.Context) {
 		response.ResError(c, traceCtx, err)
 		return
 	}
-	response.ResSuccess(c, traceCtx, res)
+	fmt.Println(common.Caller(3))
+	response.ResSuccess(c, traceCtx, res, _const.GetAllAppsMsg)
 }
 
 //
@@ -60,7 +65,7 @@ func (a apkController) GetApkById(c *gin.Context) {
 		response.ResError(c, traceCtx, err)
 		return
 	}
-	response.ResSuccess(c, traceCtx, res)
+	response.ResSuccess(c, traceCtx, res, _const.GetApkByIdMsg)
 }
 
 //
@@ -82,5 +87,16 @@ func (a apkController) ChangeOrderStatus(c *gin.Context) {
 		response.ResError(c, traceCtx, err)
 		return
 	}
-	response.ResSuccess(c, traceCtx, "")
+	response.ResSuccess(c, traceCtx, "", _const.ChangeOrderStatusMsg)
+}
+
+func (a apkController) RushPurchase(c *gin.Context) {
+	_, traceCtx := core.GetTrace(c)
+	var userInfo model.UserPurchase
+	err := core.BindReqWithContext(traceCtx, c, &userInfo)
+	if err != nil {
+		response.ResError(c, traceCtx, err)
+		return
+	}
+
 }

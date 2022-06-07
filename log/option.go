@@ -38,6 +38,8 @@ func NewOption(opts ...ZapLogOption) *Options {
 func (l *Logger) LoadCfg() {
 	if l.opts.DevFlag {
 		l.zapConfig = zap.NewDevelopmentConfig()
+		l.zapConfig.DisableStacktrace = true
+
 	} else {
 		l.zapConfig = zap.NewProductionConfig()
 	}

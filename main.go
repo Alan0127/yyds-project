@@ -14,7 +14,7 @@ func main() {
 	router.Init(g)
 	err := g.Run(":8888")
 	if err != nil {
-		log.GetLogger().Info("start error!", zap.Any("err", err.Error()))
+		log.GetLogger().Error("start error!", zap.Any("err", err.Error()))
 	}
 
 }

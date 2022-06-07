@@ -3,7 +3,7 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"yyds-pro/core/code"
+	"yyds-pro/core/const"
 	"yyds-pro/trace"
 )
 
@@ -14,13 +14,13 @@ import (
 //  @param trace
 //  @param data
 //
-func ResSuccess(c *gin.Context, trace *trace.Trace, data interface{}) {
+func ResSuccess(c *gin.Context, trace *trace.Trace, data interface{}, msg string) {
 	trace.Response.Data = data
-	trace.Response.ErrorCode = code.ResponseSuccess
+	trace.Response.ErrorCode = _const.ResponseSuccess
 	trace.Flag = true
 	c.JSON(http.StatusOK, gin.H{
-		"errorCode":    code.ResponseSuccess,
-		"errorMessage": "",
+		"errorCode":    _const.ResponseSuccess,
+		"errorMessage": msg,
 		"data":         data,
 	})
 }
@@ -33,11 +33,11 @@ func ResSuccess(c *gin.Context, trace *trace.Trace, data interface{}) {
 //  @param err
 //
 func ResError(c *gin.Context, trace *trace.Trace, err error) {
-	trace.Response.ErrorCode = code.ResponseSuccess
+	trace.Response.ErrorCode = _const.ResponseSuccess
 	trace.Response.ErrorMessage = err.Error()
 	trace.Flag = false
 	c.JSON(http.StatusOK, gin.H{
-		"errorCode":    code.ResponseError,
+		"errorCode":    _const.ResponseError,
 		"errorMessage": err,
 		"data":         "",
 	})

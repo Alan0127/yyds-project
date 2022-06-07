@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"strings"
+	"yyds-pro/common"
 	"yyds-pro/trace"
 )
 
@@ -119,12 +120,13 @@ func (l *Logger) InfoCtx(ctx *trace.Trace) {
 //  @param err
 //
 func (l *Logger) ErrorCtx(ctx *trace.Trace, err error) {
+	file, line, pcName := common.Caller(2)
+	ctx.Stack = fmt.Sprintf("%s, %s, %d", pcName, file, line)
 	fields := make([]zap.Field, 0)
 	fields = append(fields,
 		zap.Any("flag", ctx.Flag),
 		zap.Any("error", err),
-		zap.Any("traceId", ctx.TraceId),
-		zap.Any("request", ctx.Req),
+		zap.Any("Stack", ctx.Stack),
 	)
 	l.Error("trace", fields...)
 }

@@ -16,6 +16,7 @@ type Trace struct {
 	Req      Request
 	Response Response
 	Flag     bool //请求是否成功
+	Stack    string
 }
 
 type Sql struct {
@@ -72,8 +73,8 @@ func (tc *Trace) WithLatency(latency float64) *Trace {
 	return tc
 }
 
-//func (tc *Trace) WithCode(code interface{}) *Trace {
-//	tc.Response.ErrorCode = code
+//func (tc *Trace) WithCode(const interface{}) *Trace {
+//	tc.Response.ErrorCode = const
 //	return tc
 //}
 

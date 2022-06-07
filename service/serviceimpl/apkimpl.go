@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis"
-	"yyds-pro/core/code"
+	"yyds-pro/core/const"
+	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/repository"
 	"yyds-pro/repository/repoimpl"
-	redis1 "yyds-pro/server/redis"
+	defaultRedis "yyds-pro/server/redis"
 	"yyds-pro/trace"
 )
 
@@ -33,23 +34,26 @@ func NewApkService() ApkService {
 //
 func (s ApkService) GetAllApps(ctx *trace.Trace, req model.GetAppsReq) (res []model.AppInfos, err error) {
 	//先走缓存，没有缓存再走数据库查询，并更新缓存
-	field := code.AppInfosFiled
-	key := fmt.Sprintf(code.AppInfos, req.Language)
-	v, err := redis1.HashGetWithCtx(ctx, field, key)
+	field := _const.AppInfosFiled
+	key := fmt.Sprintf(_const.AppInfos, req.Language)
+	v, err := defaultRedis.HashGetWithCtx(ctx, field, key)
 	if err != nil && err != redis.Nil {
+		log.L.ErrorCtx(ctx, err)
 		return
 	}
 	if len(v) != 0 {
 		err = json.Unmarshal([]byte(v), &res)
 		if err != nil {
+			log.L.ErrorCtx(ctx, err)
 			return
 		}
 		return
 	}
 	res, err = s.ApkRepo.GetAllApps(ctx, req)
 	temp, _ := json.Marshal(&res)
-	err = redis1.HashSetWithContext(ctx, field, key, temp)
+	err = defaultRedis.HashSetWithContext(ctx, field, key, temp)
 	if err != nil {
+		log.L.ErrorCtx(ctx, err)
 		return
 	}
 	return
@@ -82,7 +86,14 @@ func (s ApkService) ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderReq 
 	cal = 1
 	//取消预约
 	if orderReq.OrderReqType == 0 {
-		cal = -1
+		cal = 0
+	}
+	status, err := s.ApkRepo.GetTaskUserOrderStatus(ctx, orderReq)
+	if err != nil {
+		return
+	}
+	if status == cal {
+		return
 	}
 	return s.ApkRepo.ChangeTaskOrderStatusByOrderInfo(ctx, orderReq, cal)
 }
