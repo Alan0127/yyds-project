@@ -1,9 +1,7 @@
 package request
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"yyds-pro/common"
 	"yyds-pro/core"
 	"yyds-pro/core/const"
 	"yyds-pro/core/response"
@@ -29,6 +27,12 @@ func NewAppController(g *model.Routes) {
 	g.Public.POST("RushPurchase", handler.RushPurchase)
 }
 
+//
+//  GetAllApps
+//  @Description: 获取所有
+//  @receiver a
+//  @param c
+//
 func (a apkController) GetAllApps(c *gin.Context) {
 	_, traceCtx := core.GetTrace(c)
 	var appReq model.GetAppsReq
@@ -42,7 +46,6 @@ func (a apkController) GetAllApps(c *gin.Context) {
 		response.ResError(c, traceCtx, err)
 		return
 	}
-	fmt.Println(common.Caller(3))
 	response.ResSuccess(c, traceCtx, res, _const.GetAllAppsMsg)
 }
 

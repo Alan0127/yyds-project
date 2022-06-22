@@ -10,6 +10,7 @@ import (
 
 func main() {
 	core.InitDefaultConnections()
+	gin.SetMode("debug")
 	g := gin.New()
 	router.Init(g)
 	err := g.Run(":8888")

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"yyds-pro/common"
+	_const "yyds-pro/core/const"
 )
 
 const traceIDHeader = "X-TRACE-ID"
@@ -45,6 +46,36 @@ type Response struct {
 	CostSeconds  float64     `json:"costSecond"`   // 执行时间(单位秒)
 }
 
+func (t *Trace) WithResErrorMessage(err error) *Trace {
+	t.Response.ErrorMessage = err.Error()
+	return t
+}
+
+func (t *Trace) WithResErrorCode() *Trace {
+	t.Response.ErrorCode = _const.ResponseError
+	return t
+}
+
+func (t *Trace) WithResErrorFlag() *Trace {
+	t.Flag = false
+	return t
+}
+
+func (t *Trace) WithSuccessCode() *Trace {
+	t.Response.ErrorCode = _const.ResponseSuccess
+	return t
+}
+
+func (t *Trace) WithSuccessData(data interface{}) *Trace {
+	t.Response.Data = data
+	return t
+}
+
+func (t *Trace) WithSuccessFlag() *Trace {
+	t.Flag = true
+	return t
+}
+
 func NewTraceContext(ctx *gin.Context) *Trace {
 	//查traceId
 	traceID := ctx.Request.Header.Get(traceIDHeader)
@@ -73,12 +104,15 @@ func (tc *Trace) WithLatency(latency float64) *Trace {
 	return tc
 }
 
-//func (tc *Trace) WithCode(const interface{}) *Trace {
-//	tc.Response.ErrorCode = const
-//	return tc
-//}
-
 func (tc *Trace) WithTraceId(traceId string) *Trace {
 	tc.TraceId = traceId
 	return tc
+}
+
+func WithErrTrace(trace *Trace, err error) {
+	trace.Response.ErrorCode = _const.ResponseSuccess
+	if err != nil {
+		trace.Flag = false
+		trace.Response.ErrorMessage = err.Error()
+	}
 }

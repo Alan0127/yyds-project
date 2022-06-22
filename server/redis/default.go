@@ -264,5 +264,47 @@ func GetIntegralByIdFromCache(ctx *trace.Trace, id int) (val string, err error) 
 		ctx.Redis.Error = err
 	}
 	return
+}
 
+//基于redis的滑动窗口限流
+func RollingWindowLimiter(queueName string, count uint, timeWindow int64) bool {
+	currTime := time.Now().Unix()
+	length := uint(ListLen(queueName))
+	if length < count {
+		ListLpush(queueName, currTime)
+		return true
+	}
+	//队列满了,取出最早访问的时间
+	earlyTime, _ := strconv.ParseInt(GetElemByIndex(queueName, int64(length)-1), 10, 64)
+	//说明最早期的时间还在时间窗口内,还没过期,所以不允许通过
+	if currTime-earlyTime <= timeWindow {
+		return false
+	} else {
+		//说明最早期的访问应该过期了,去掉最早期的
+		ListRPop(queueName)
+		ListLPush(queueName, currTime)
+	}
+	return true
+}
+
+func ListLen(key string) int64 {
+	res := DefaultRedisClient.LLen(key)
+	return res.Val()
+}
+
+func ListLpush(key string, currTime int64) {
+	DefaultRedisClient.LPush(key, currTime)
+}
+
+func GetElemByIndex(key string, len int64) string {
+	res := DefaultRedisClient.LIndex(key, len)
+	return res.Val()
+}
+
+func ListRPop(key string) {
+	DefaultRedisClient.LPop(key)
+}
+
+func ListLPush(key string, val int64) {
+	DefaultRedisClient.LPush(key, val)
 }
