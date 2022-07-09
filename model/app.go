@@ -3,7 +3,7 @@ package model
 type language string
 
 type GetAppsReq struct {
-	Language language `json:"language"`
+	Language language `json:"language" binding:"required"`
 }
 
 type ReqId struct {

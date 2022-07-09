@@ -24,7 +24,7 @@ func NewAppController(g *model.Routes) {
 	g.Public.POST("getAppAppInfos", handler.GetAllApps)
 	g.Public.POST("getAppInfoById", handler.GetApkById)
 	g.Public.POST("order", handler.ChangeOrderStatus)
-	g.Public.POST("RushPurchase", handler.RushPurchase)
+	//g.Public.POST("RushPurchase", handler.RushPurchase)
 }
 
 //
@@ -93,13 +93,13 @@ func (a apkController) ChangeOrderStatus(c *gin.Context) {
 	response.ResSuccess(c, traceCtx, "", _const.ChangeOrderStatusMsg)
 }
 
-func (a apkController) RushPurchase(c *gin.Context) {
-	_, traceCtx := core.GetTrace(c)
-	var userInfo model.UserPurchase
-	err := core.BindReqWithContext(traceCtx, c, &userInfo)
-	if err != nil {
-		response.ResError(c, traceCtx, err)
-		return
-	}
-
-}
+//func (a apkController) RushPurchase(c *gin.Context) {
+//	_, traceCtx := core.GetTrace(c)
+//	var userInfo model.UserPurchase
+//	err := core.BindReqWithContext(traceCtx, c, &userInfo)
+//	if err != nil {
+//		response.ResError(c, traceCtx, err)
+//		return
+//	}
+//
+//}

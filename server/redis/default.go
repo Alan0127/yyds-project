@@ -266,7 +266,14 @@ func GetIntegralByIdFromCache(ctx *trace.Trace, id int) (val string, err error) 
 	return
 }
 
-//基于redis的滑动窗口限流
+//
+//  RollingWindowLimiter
+//  @Description: 基于redis的滑动窗口限流
+//  @param queueName
+//  @param count
+//  @param timeWindow
+//  @return bool
+//
 func RollingWindowLimiter(queueName string, count uint, timeWindow int64) bool {
 	currTime := time.Now().Unix()
 	length := uint(ListLen(queueName))

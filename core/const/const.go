@@ -7,6 +7,7 @@ const (
 )
 
 const (
+	TraceId              = "trace_id"
 	GetAllAppsMsg        = "GetAllApps success!"
 	GetApkByIdMsg        = "GetApkById success!"
 	ChangeOrderStatusMsg = "ChangeOrderStatus success!"

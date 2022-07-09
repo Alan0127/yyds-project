@@ -41,7 +41,7 @@ func ResError(c *gin.Context, trace *_trace.Trace, err error) {
 		WithResErrorFlag()
 	c.JSON(http.StatusOK, gin.H{
 		"errorCode":    _const.ResponseError,
-		"errorMessage": err,
+		"errorMessage": err.Error(),
 		"data":         "",
 	})
 }

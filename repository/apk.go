@@ -40,5 +40,13 @@ type ApkRepo interface {
 	//
 	ChangeTaskOrderStatusByOrderInfo(ctx *trace.Trace, orderReq model.OrderReq, cal int) (err error)
 
+	//
+	//  GetTaskUserOrderStatus
+	//  @Description:
+	//  @param ctx
+	//  @param orderReq
+	//  @return status
+	//  @return err
+	//
 	GetTaskUserOrderStatus(ctx *trace.Trace, orderReq model.OrderReq) (status int, err error)
 }

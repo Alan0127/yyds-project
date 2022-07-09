@@ -12,12 +12,11 @@ func Init(g *gin.Engine) {
 	request.NewAppController(CreateRoute(groupV1, "/apk/"))
 	request.NewRateController(CreateRoute(groupV1, "/rateLimiterAndIntegral/"))
 	request.NewUserController(CreateRoute(groupV1, "/user/"))
-
 }
 
 func CreateRoute(group *gin.RouterGroup, path string) *model.Routes {
 	tg := group.Group(path)
-	tg.Use(middleware.Logger())
+	tg.Use(middleware.Logger()) //middleware.JwtToken())
 	return &model.Routes{
 		Public: tg,
 	}

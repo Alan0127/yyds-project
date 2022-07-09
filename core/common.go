@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	_const "yyds-pro/core/const"
 	"yyds-pro/trace"
 )
 
@@ -16,7 +17,7 @@ import (
 //
 func GetTrace(c *gin.Context) (err error, traceCtx *trace.Trace) {
 	var ok bool
-	traceId, _ := c.Get("traceId")
+	traceId, _ := c.Get(_const.TraceId)
 	if len(traceId.(string)) == 0 {
 		err = errors.New("get traceId error")
 		return

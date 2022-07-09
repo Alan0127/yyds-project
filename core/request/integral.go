@@ -58,7 +58,7 @@ func (r rateController) GetIntegral(c *gin.Context) {
 		return
 	}
 	//用户校验相关(暂未处理)
-	if user.UserName == "" || user.Password == "" || user.Token == "" || user.Country == "" {
+	if user.UserName == "" || user.Password == "" || user.Country == "" {
 		response.ResError(c, traceCtx, errors.New("account check error"))
 		return
 	}
