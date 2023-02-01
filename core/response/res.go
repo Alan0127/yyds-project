@@ -14,14 +14,14 @@ import (
 //  @param trace
 //  @param data
 //
-func ResSuccess(c *gin.Context, trace *_trace.Trace, data interface{}, msg string) {
+func ResSuccess(trace *_trace.Trace, data interface{}, msg string) {
 	trace.Response.Data = data
 	trace.Response.ErrorCode = _const.ResponseSuccess
 	trace.Flag = true
 	trace.WithSuccessFlag().
 		WithSuccessData(data).
 		WithSuccessCode()
-	c.JSON(http.StatusOK, gin.H{
+	trace.Context.(*gin.Context).JSON(http.StatusOK, gin.H{
 		"errorCode":    _const.ResponseSuccess,
 		"errorMessage": msg,
 		"data":         data,
@@ -35,13 +35,14 @@ func ResSuccess(c *gin.Context, trace *_trace.Trace, data interface{}, msg strin
 //  @param trace
 //  @param err
 //
-func ResError(c *gin.Context, trace *_trace.Trace, err error) {
+func ResError(trace *_trace.Trace, err error) {
 	trace.WithResErrorMessage(err).
 		WithResErrorCode().
 		WithResErrorFlag()
-	c.JSON(http.StatusOK, gin.H{
+	trace.Context.(*gin.Context).JSON(http.StatusOK, gin.H{
 		"errorCode":    _const.ResponseError,
 		"errorMessage": err.Error(),
 		"data":         "",
 	})
+	trace.Context.(*gin.Context).Abort()
 }

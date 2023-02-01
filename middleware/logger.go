@@ -10,7 +10,7 @@ import (
 
 //
 //  Logger
-//  @Description: log中间件，实现日志链路全流程追踪
+//  @Description: log中间件，实现日志链路追踪
 //  @return gin.HandlerFunc
 //
 func Logger() gin.HandlerFunc {

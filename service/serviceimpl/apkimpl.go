@@ -2,9 +2,11 @@ package serviceimpl
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
 	"yyds-pro/core/const"
+	con "yyds-pro/core/const"
 	"yyds-pro/log"
 	"yyds-pro/model"
 	"yyds-pro/repository"
@@ -33,6 +35,11 @@ func NewApkService() ApkService {
 //  @return err
 //
 func (s ApkService) GetAllApps(ctx *trace.Trace, req model.GetAppsReq) (res []model.AppInfos, err error) {
+	var temp = make([]model.AppInfos, 0)
+	if !con.LanguageMap[string(req.Language)] {
+		err = errors.New(fmt.Sprintf("不支持%v语言", req.Language))
+		return
+	}
 	//先走缓存，没有缓存再走数据库查询，并更新缓存
 	field := _const.AppInfosFiled
 	key := fmt.Sprintf(_const.AppInfos, req.Language)
@@ -41,19 +48,23 @@ func (s ApkService) GetAllApps(ctx *trace.Trace, req model.GetAppsReq) (res []mo
 		log.L.ErrorCtx(ctx, err)
 		return
 	}
-	if len(v) != 0 {
-		err = json.Unmarshal([]byte(v), &res)
+	err = json.Unmarshal([]byte(v), &res)
+	if err != nil {
+		log.L.ErrorCtx(ctx, err)
+		return
+	}
+	if res == nil {
+		temp, err = s.ApkRepo.GetAllApps(ctx, req)
+		if len(temp) == 0 {
+			err = errors.New("查询失败，无数据返回")
+			return
+		}
+		t, _ := json.Marshal(&temp)
+		err = defaultRedis.HashSetWithContext(ctx, field, key, t)
 		if err != nil {
 			log.L.ErrorCtx(ctx, err)
 			return
 		}
-		return
-	}
-	res, err = s.ApkRepo.GetAllApps(ctx, req)
-	temp, _ := json.Marshal(&res)
-	err = defaultRedis.HashSetWithContext(ctx, field, key, temp)
-	if err != nil {
-		log.L.ErrorCtx(ctx, err)
 		return
 	}
 	return

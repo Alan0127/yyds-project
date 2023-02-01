@@ -12,6 +12,7 @@ import (
 
 var (
 	L        *Logger             //全局log实例
+	MonitorL *Logger             //监控日志
 	outWrite zapcore.WriteSyncer // IO输出
 )
 
@@ -21,12 +22,22 @@ type Logger struct {
 	zapConfig zap.Config
 }
 
+//初始化default日志
 func InitDefaultLog(opt ...ZapLogOption) {
 	L = &Logger{
 		opts: NewOption(opt...),
 	}
 	L.LoadCfg() //默认设置
 	L.initLog()
+}
+
+//初始化监控日志
+func InitMonitorLog(opt ...ZapLogOption) {
+	MonitorL = &Logger{
+		opts: NewOption(opt...),
+	}
+	MonitorL.LoadCfg() //默认设置
+	MonitorL.initLog()
 }
 
 //
@@ -87,10 +98,19 @@ func (l *Logger) GetLevel() (level zapcore.Level) {
 
 func GetLogger() *Logger {
 	if L == nil {
-		fmt.Println("Please initialize the hlog service first")
-		return nil
+		//如果log为nil，重新初始化一遍
+		InitDefaultLog(SetLevel("info"), SetPath("/logs/"))
+		return L
 	}
 	return L
+}
+
+func GetMonitorLogger() *Logger {
+	if MonitorL == nil {
+		fmt.Println("Please initialize the MonitorL service first")
+		return nil
+	}
+	return MonitorL
 }
 
 //
@@ -104,7 +124,7 @@ func (l *Logger) InfoCtx(ctx *trace.Trace) {
 	fields = append(fields,
 		zap.Any("flag", ctx.Flag),
 		zap.Any("traceId", ctx.TraceId),
-		zap.Any("request", ctx.Req),
+		zap.Any("handler", ctx.Req),
 		zap.Any("response", ctx.Response),
 		zap.Any("redis", ctx.Redis),
 		zap.Any("sql", ctx.Sql),

@@ -39,8 +39,8 @@ func GetTrace(c *gin.Context) (err error, traceCtx *trace.Trace) {
 //  @param data
 //  @return err
 //
-func BindReqWithContext(traceCtx *trace.Trace, c *gin.Context, data interface{}) (err error) {
-	err = c.ShouldBindWith(data, binding.JSON)
+func BindReqWithContext(traceCtx *trace.Trace, data interface{}) (err error) {
+	err = traceCtx.Context.(*gin.Context).ShouldBindWith(data, binding.JSON)
 	if err != nil {
 		return
 	}

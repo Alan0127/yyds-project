@@ -13,3 +13,18 @@ app:
     maxIdle: 1000
     maxOpen: 2000
     idleTimeout: 200
+  kafka:
+    address: 159.75.35.70
+    port: 9092
+    kafkaTimeOut: 5
+  oss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com
+    accessKeyId: LTAI5tRnywXd9PfcQQgNuPf6
+    accessKeySecret: QoQRiBogPcoQ6CqJ2vpsbic51LEgoQ
+    bucketName: alanguo
+    path: myReport/local/
+  elasticSearch:
+    url: http://159.75.35.70
+    port: 9200
+    user: elastic
+    password: 123456

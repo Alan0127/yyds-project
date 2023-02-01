@@ -1,7 +1,6 @@
 package repoimpl
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 	"yyds-pro/log"
 	"yyds-pro/server/mysql"
@@ -49,7 +48,6 @@ func (r RateLimiterRepository) InitIntegralDb(ctx *trace.Trace, id, money int) (
 //  @return err
 //
 func (r RateLimiterRepository) UpdateUserIntegral(ctx *trace.Trace, val int, userName string) (err error) {
-	fmt.Println(userName)
 	var i int
 	err = r.AppDb.WithContext(ctx).Raw(`update 
 											  user_info u 

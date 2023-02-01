@@ -18,6 +18,7 @@ type Logger struct {
 	IgnoreRecordNotFoundError bool
 }
 
+// 重写日志，实现链路追踪功能
 func New() Logger {
 	return Logger{
 		ZapLogger:                 log.GetLogger().Logger,

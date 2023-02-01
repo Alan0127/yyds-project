@@ -57,7 +57,7 @@ const (
 	-- 如果用户已抢过积分，则返回nil
 	-- 0:用户已经抢过积分，不能再抢第二次  -1:积分已经抢完   1:获取积分成
 	-- 检查用户是否已经抢过积分
-	locala userReward = redis.call("SISMEMBER", KEYS[1], KEYS[2]);
+	local userReward = redis.call("SISMEMBER", KEYS[1], KEYS[2]);
 	if (userReward == 1) 
 	then
 		return 0;

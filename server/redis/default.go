@@ -12,6 +12,7 @@ import (
 
 var DefaultRedisClient *redis.Client
 
+//初始化redis连接
 func InitRedis(config model.AppConfig) (err error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -119,9 +120,6 @@ func PipelineGetHashField(ctx trace.Trace, keyList []string, filed string) (err 
 			ctx.Redis.Flag = false
 			return
 		}
-		/********** ！！！！！！！！！！*************/
-		// 注意这里如果某一次获取时出错（常见的redis.Nil），返回的err即不为空
-		// 如果需要处理redis.Nil为默认值，此处不能直接return
 	}
 	for _, cmdRes := range res {
 		var val string

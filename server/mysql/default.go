@@ -9,6 +9,7 @@ import (
 
 var Client *gorm.DB
 
+//初始化mysql连接
 func InitMysql(config model.AppConfig) (err error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		config.App.Database.User,
