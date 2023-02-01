@@ -28,7 +28,7 @@ type UserController struct {
 func (u UserController) Login(c *gin.Context) {
 	_, traceCtx := core.GetTrace(c)
 	var user model.UserInfo
-	var sessionUserInfo middleware.SessionInfo //cache缓存登录信息，30分钟过期
+	//var sessionUserInfo middleware.SessionInfo //cache缓存登录信息，30分钟过期
 	err := core.BindReqWithContext(traceCtx, &user)
 	if err != nil {
 		response.ResError(traceCtx, err)
@@ -40,24 +40,23 @@ func (u UserController) Login(c *gin.Context) {
 		response.ResError(traceCtx, err)
 		return
 	}
-	if res.UserName == "" && res.Password == "" && res.Country == "" {
+	if res.UserName == "" && res.UserPass == "" && res.UserCountry == "" {
 		response.ResError(traceCtx, errors.New("用户不存在！"))
 		return
 	}
 	//密码校验
-	flag := util.ComparePwd(res.Password, []byte(user.Password))
+	flag := util.ComparePwd(res.UserPass, []byte(user.Password))
 	if !flag {
 		response.ResError(traceCtx, errors.New("密码错误！"))
 		return
 	}
 	token, code := middleware.SetToken(user.UserName)
+
 	if code != 200 {
 		response.ResError(traceCtx, errors.New("创建token失败！"))
 		return
 	}
-	sessionUserInfo.UserName = user.UserName
-	sessionUserInfo.UserID = "1"
-	temp, _ := json.Marshal(sessionUserInfo)
+	temp, _ := json.Marshal(res)
 	err = redis.DefaultRedisClient.Set(a.RedisLoginToken+token, temp, 30*time.Minute).Err()
 	if err != nil {
 		response.ResError(traceCtx, err)

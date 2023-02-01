@@ -11,6 +11,18 @@ type UserInfo struct {
 	//Token    string `json:"token"`
 }
 
+type UserResInfo struct {
+	Id           int64   `gorm:"column:id"`
+	UserName     string  `json:"userName" gorm:"column:user_name"`
+	UserPass     string  `json:"userPass" gorm:"column:user_pass"`
+	UserCountry  string  `json:"userCountry" gorm:"column:user_country"`
+	UserAge      int64   `json:"userAge" gorm:"column:user_age"`
+	UserGender   string  `json:"userGender" gorm:"column:user_gender"`
+	UserPhone    string  `json:"userPhone" gorm:"column:user_phone"`
+	UserWechat   string  `json:"userWechat" gorm:"column:user_wechat"`
+	UserIntegral float64 `json:"userIntegral" gorm:"column:user_integral"`
+}
+
 //
 //  RegisterInfo
 //  @Description: 注册信息

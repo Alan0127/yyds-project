@@ -26,8 +26,8 @@ func NewUserRepository() *UserRepository {
 //  @return res
 //  @return err
 //
-func (u UserRepository) CheckLogin(ctx *trace.Trace, userName, userCountry string) (res model.UserInfo, err error) {
-	err = u.AppDb.WithContext(ctx).Raw(`SELECT user_name, user_pass, user_country 
+func (u UserRepository) CheckLogin(ctx *trace.Trace, userName, userCountry string) (res model.UserResInfo, err error) {
+	err = u.AppDb.WithContext(ctx).Raw(`SELECT * 
 											FROM user_info 
 											WHERE user_name= ?`, userName).Scan(&res).Error
 	return

@@ -19,7 +19,7 @@ type UserService interface {
 	//  @return model.UserInfo
 	//  @return error
 	//
-	CheckLogin(ctx *trace.Trace, userName, userCountry string) (model.UserInfo, error)
+	CheckLogin(ctx *trace.Trace, userName, userCountry string) (model.UserResInfo, error)
 
 	//
 	//  RegisterUser

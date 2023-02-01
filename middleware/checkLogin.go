@@ -7,12 +7,13 @@ import (
 	a "yyds-pro/core/const"
 	"yyds-pro/core/response"
 	"yyds-pro/log"
+	"yyds-pro/model"
 	"yyds-pro/server/redis"
 	"yyds-pro/trace"
 )
 
 type SessionInfo struct {
-	UserID   string `json:"userId"`   // 用户ID
+	UserID   int64  `json:"userId"`   // 用户ID
 	UserName string `json:"userName"` // 用户名
 }
 
@@ -24,7 +25,10 @@ type SessionInfo struct {
 //  @return err
 //
 func CheckLogin(c *gin.Context) (info SessionInfo, err error) {
-	var cacheInfo string
+	var (
+		userInfo  model.UserResInfo
+		cacheInfo string
+	)
 	token := c.GetHeader(a.HeaderToken)
 	if token == "" {
 		err = errors.New("AuthorizationError")
@@ -38,7 +42,9 @@ func CheckLogin(c *gin.Context) (info SessionInfo, err error) {
 		err = errors.New("无缓存用户信息，请检查")
 		return
 	}
-	err = json.Unmarshal([]byte(cacheInfo), &info)
+	err = json.Unmarshal([]byte(cacheInfo), &userInfo)
+	info.UserName = userInfo.UserName
+	info.UserID = userInfo.Id
 	if err != nil {
 		return
 	}
