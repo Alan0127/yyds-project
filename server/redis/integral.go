@@ -16,9 +16,9 @@ const (
 	redis.replicate_commands();
 	redis.call("pexpire", KEYS[1], 1000);
 	local now = redis.call("TIME");
-	redis.call("SET", "now", tonumber(now[1]));	
-
+	redis.call("SET", "now", tonumber(now[1]));
 	--tonumber是将value转换为数字，此步是取出桶中最大令牌数、生成令牌的速率(每秒生成多少个)、当前时间
+
 	local max_token_num = 30;
 	local token_rate = 20;
 	local current_time = tonumber(now[1]);

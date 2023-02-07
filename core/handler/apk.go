@@ -78,14 +78,3 @@ func (a ApkController) ChangeOrderStatus(c *gin.Context) {
 	}
 	response.ResSuccess(traceCtx, "", _const.ChangeOrderStatusMsg)
 }
-
-//func (a apkController) RushPurchase(c *gin.Context) {
-//	_, traceCtx := core.GetTrace(c)
-//	var userInfo model.UserPurchase
-//	err := core.BindReqWithContext(traceCtx, c, &userInfo)
-//	if err != nil {
-//		response.ResError(c, traceCtx, err)
-//		return
-//	}
-//
-//}

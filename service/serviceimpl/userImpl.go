@@ -26,7 +26,7 @@ func NewUserService() UserService {
 //  @return model.UserInfo
 //  @return error
 //
-func (s UserService) CheckLogin(ctx *trace.Trace, userName, userCountry string) (model.UserInfo, error) {
+func (s UserService) CheckLogin(ctx *trace.Trace, userName, userCountry string) (model.UserResInfo, error) {
 	return s.UserRepo.CheckLogin(ctx, userName, userCountry)
 }
 

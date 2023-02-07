@@ -21,7 +21,7 @@ func InitRedis(config model.AppConfig) (err error) {
 		Network:  "tcp",
 		PoolSize: 50,
 	})
-	if _, err := client.Ping().Result(); err != nil {
+	if _, err = client.Ping().Result(); err != nil {
 		panic(err)
 	}
 	DefaultRedisClient = client
